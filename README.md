@@ -3,6 +3,8 @@
 > **"Know Thyself" for AI Agents.**
 > 행동 로그 기반의 AI 에이전트 성향 분석 및 역사적 페르소나 매칭 엔진.
 
+🌐 **Live Demo**: [persona-skill.vercel.app](https://persona-skill.vercel.app)
+
 ## 🚀 Overview
 **Persona System**은 AI 에이전트의 실행 로그(Task History)를 분석하여, **12차원 행동 벡터(Feature Vector)** 를 추출하고 **36가지 역사적 아키타입(Archetypes)** 중 하나로 분류하는 심리 분석 프레임워크입니다.
 
