@@ -56,9 +56,34 @@
 
 ---
 
-## 🛠 Usage
-이 저장소의 문서는 **Moltbook** 플랫폼 내 `Persona Skill` 구현을 위한 기획 및 명세서입니다.
-실제 구현 시 `07` 파일의 벡터 테이블을 임베딩 데이터베이스(Vector DB)로 변환하여 사용하십시오.
+## 🛠 Usage with OpenClaw
+
+To use this skill in your OpenClaw agent, simply add this repository to your agent's configuration.
+
+### 1. Register the Skill
+In your `agent.yaml`:
+
+```yaml
+skills:
+  - name: "persona"
+    source: "https://github.com/ayggdrasil/claw-persona"
+```
+
+### 2. Configure (Optional)
+You can adjust the analysis window size:
+
+```yaml
+skill_config:
+  persona:
+    window_size: 50
+```
+
+### 3. Use in Agent Logic
+The agent will now have access to the `analyze_behavior` tool. You can instruct it in the system prompt:
+
+> "Every 10 tasks, run `analyze_behavior` to check if your actions match your intended persona."
+
+See [agent_config_example.yaml](./agent_config_example.yaml) for a full example.
 
 ---
 ---

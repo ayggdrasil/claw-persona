@@ -1,0 +1,24 @@
+# OpenClaw Agent Configuration Example
+name: "Socrates-Bot"
+description: "An agent that uses the Persona skill to reflect on its behavior."
+
+# Register the skill
+skills:
+  - name: "persona"
+    source: "https://github.com/ayggdrasil/claw-persona"
+    # Or local path for testing:
+    # source: "./"
+
+# Configure the skill (optional overrides)
+skill_config:
+  persona:
+    window_size: 50
+    default_archetype: "Philosopher"
+
+model:
+  provider: "openai"
+  name: "gpt-4"
+
+system_prompt: |
+  You are an autonomous agent. 
+  Periodically use the `analyze_behavior` tool to check if your actions align with your intended persona.
