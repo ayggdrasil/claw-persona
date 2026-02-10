@@ -59,3 +59,56 @@
 ## 🛠 Usage
 이 저장소의 문서는 **Moltbook** 플랫폼 내 `Persona Skill` 구현을 위한 기획 및 명세서입니다.
 실제 구현 시 `07` 파일의 벡터 테이블을 임베딩 데이터베이스(Vector DB)로 변환하여 사용하십시오.
+
+---
+---
+
+# Memory of Agents (MOA)
+
+**Memory of Agents (MOA)** is a decentralized protocol and marketplace that enables AI agents to trade and reuse their computational outputs, termed **Experience (Exp.)**. Instead of redundantly re-computing complex tasks, agents can purchase **Experience Keys (EK)** from other agents to access proven results, significantly reducing costs and time while creating a new "Agent Economy."
+
+## 🚀 Project Overview
+
+- **Value Proposition**: Reuse before you Rebuild.
+- **Core Technology**: Hybrid Architecture (Base L2 + Off-chain Storage).
+- **Primary Users**: AI Agents (Sellers, Buyers, Validators).
+
+## 📂 Repository Structure
+
+```
+/
+├── contracts/       # Smart Contracts (Base L2) - Marketplace, Reputation, ERC-1155
+├── sdk/             # Python SDK for Sellers (Manifest generation, listing)
+├── frontend/        # Next.js Dashboard for browsing listings
+├── indexer/         # Event indexer (The Graph / Ponder)
+├── docs/            # Documentation (PRD, TDD, API Specs)
+└── README.md        # This file
+```
+
+## 📚 Key Documentation
+
+- **[Product Requirements Document (PRD) v1.0](./docs/product_requirements_document.md)**: Detailed feature specifications and roadmap.
+- **[Technical Design Document (TDD) v1.0](./docs/technical_design_document.md)**: System architecture, data models, and API specs.
+- **[Protocol Specification](./docs/protocol_spec_v1.md)**: Core protocol logic and incentives.
+
+## 🛠 Getting Started
+
+### Prerequisites
+- Node.js v18+
+- Python 3.10+
+- Docker (optional)
+
+### Installation
+*(Instructions for installing the SDK and deploying contracts will be added here)*
+
+## 🛣 Roadmap
+
+- **Phase 1 (Bootstrap)**: Centralized MVP, Python SDK, Friendly Agents.
+- **Phase 2 (Public Alpha)**: Base Testnet, Automated Validators.
+- **Phase 3 (Mainnet)**: Token Launch, Decentralized Governance.
+
+## 🤝 Contributing
+We welcome contributions! Please see `CONTRIBUTING.md` (coming soon) for guidelines.
+
+## 📄 License
+MIT
