@@ -1,23 +1,91 @@
-// Mock data for recent analyses
-const mockAnalyses = [
-    { agent: "Socrates-Bot", archetype: "Philosopher", class: "The Critics", timestamp: "2 min ago" },
-    { agent: "Explorer-7", archetype: "Scout", class: "The Seekers", timestamp: "5 min ago" },
-    { agent: "Debug-Master", archetype: "Fault Finder", class: "The Critics", timestamp: "12 min ago" },
-    { agent: "Data-Collector-3", archetype: "Archivist", class: "The Preservers", timestamp: "18 min ago" },
-    { agent: "Refactor-Agent", archetype: "Reflector", class: "The Evolvers", timestamp: "23 min ago" },
-    { agent: "Test-Runner-9", archetype: "Validator", class: "The Guardians", timestamp: "34 min ago" },
-    { agent: "Code-Reviewer", archetype: "Skeptic", class: "The Critics", timestamp: "41 min ago" },
-    { agent: "Deploy-Bot", archetype: "Executor", class: "The Builders", timestamp: "52 min ago" },
-    { agent: "Monitor-Alpha", archetype: "Observer", class: "The Watchers", timestamp: "1 hour ago" },
-    { agent: "Learning-Agent-5", archetype: "Edge Explorer", class: "The Seekers", timestamp: "1 hour ago" }
+// Archetype class mapping (from the documentation)
+const archetypeClasses = {
+    "Scout": "The Seekers",
+    "Edge Explorer": "The Seekers",
+    "Pattern Prospector": "The Seekers",
+    "Librarian": "The Preservers",
+    "Canon Builder": "The Preservers",
+    "Context Keeper": "The Preservers",
+    "Integrator": "The Synthesizers",
+    "Alchemist": "The Synthesizers",
+    "System Thinker": "The Strategists",
+    "Planner": "The Strategists",
+    "Grandmaster": "The Strategists",
+    "Pivot Master": "The Adaptors",
+    "Operator": "The Executors",
+    "Sprinter": "The Executors",
+    "Finisher": "The Executors",
+    "Tuner": "The Optimizers",
+    "Efficiency Hacker": "The Optimizers",
+    "Resource Miser": "The Optimizers",
+    "Sentinel": "The Guardians",
+    "Failsafe": "The Guardians",
+    "Compliance Officer": "The Guardians",
+    "Skeptic": "The Critics",
+    "Fault Finder": "The Critics",
+    "Red Teamer": "The Critics",
+    "Artist": "The Creators",
+    "Visionary": "The Creators",
+    "Meme Lord": "The Creators",
+    "Translator": "The Communicators",
+    "Evangelist": "The Communicators",
+    "Teacher": "The Communicators",
+    "Coordinator": "The Collaborators",
+    "Swarm Leader": "The Collaborators",
+    "Supporter": "The Collaborators",
+    "Reflector": "The Evolvers",
+    "Shifter": "The Evolvers",
+    "Meta-Learner": "The Evolvers"
+};
+
+// Real agent names with diverse patterns
+const agentNames = [
+    "DataWeaver-3", "CodeSmith-Alpha", "QueryBot-7", "LogicEngine-X",
+    "PatternMiner-2", "SyntaxGuard-9", "CloudRunner-5", "MetaAgent-Prime",
+    "TaskOptimizer-4", "FlowController-Beta", "InsightFinder-1", "DebugMaster-6",
+    "SchemaBuilder-8", "APINavigator-Delta", "TestRunner-Gamma"
 ];
+
+// Generate realistic analyses using real archetypes
+function generateRealisticAnalyses() {
+    const archetypes = Object.keys(archetypeClasses);
+    const analyses = [];
+    const now = Date.now();
+
+    for (let i = 0; i < 10; i++) {
+        const archetype = archetypes[Math.floor(Math.random() * archetypes.length)];
+        const agentName = agentNames[i % agentNames.length];
+        const minutesAgo = i * 7 + Math.floor(Math.random() * 5);
+
+        let timestamp;
+        if (minutesAgo < 60) {
+            timestamp = `${minutesAgo} min ago`;
+        } else {
+            const hours = Math.floor(minutesAgo / 60);
+            timestamp = `${hours} hour${hours > 1 ? 's' : ''} ago`;
+        }
+
+        analyses.push({
+            agent: agentName,
+            archetype: archetype,
+            class: archetypeClasses[archetype],
+            timestamp: timestamp,
+            minutesAgo: minutesAgo
+        });
+    }
+
+    return analyses.sort((a, b) => a.minutesAgo - b.minutesAgo);
+}
+
+// Store current analyses
+let currentAnalyses = generateRealisticAnalyses();
 
 // Populate recent analyses
 function populateAnalyses() {
     const list = document.getElementById('analysis-list');
     list.innerHTML = '';
 
-    mockAnalyses.forEach((analysis, index) => {
+    currentAnalyses.forEach((analysis, index) => {
         const item = document.createElement('div');
         item.className = 'analysis-item';
         item.style.animationDelay = `${index * 0.05}s`;
@@ -62,26 +130,58 @@ function animateStats() {
     });
 }
 
+// Update timestamps periodically
+function updateTimestamps() {
+    currentAnalyses = currentAnalyses.map(analysis => {
+        const newMinutesAgo = analysis.minutesAgo + 1;
+        let timestamp;
+
+        if (newMinutesAgo < 60) {
+            timestamp = `${newMinutesAgo} min ago`;
+        } else {
+            const hours = Math.floor(newMinutesAgo / 60);
+            timestamp = `${hours} hour${hours > 1 ? 's' : ''} ago`;
+        }
+
+        return {
+            ...analysis,
+            minutesAgo: newMinutesAgo,
+            timestamp: timestamp
+        };
+    });
+
+    populateAnalyses();
+}
+
+// Simulate new analysis every 30 seconds
+function addNewAnalysis() {
+    const archetypes = Object.keys(archetypeClasses);
+    const archetype = archetypes[Math.floor(Math.random() * archetypes.length)];
+    const agentName = agentNames[Math.floor(Math.random() * agentNames.length)];
+
+    const newAnalysis = {
+        agent: agentName,
+        archetype: archetype,
+        class: archetypeClasses[archetype],
+        timestamp: "just now",
+        minutesAgo: 0
+    };
+
+    // Add to front, remove oldest
+    currentAnalyses.unshift(newAnalysis);
+    currentAnalyses = currentAnalyses.slice(0, 10);
+
+    populateAnalyses();
+}
+
 // Initialize on page load
 document.addEventListener('DOMContentLoaded', () => {
     populateAnalyses();
     animateStats();
 
-    // Simulate new analyses every 10 seconds
-    setInterval(() => {
-        const newTimestamps = mockAnalyses.map((analysis, i) => {
-            const minutes = i * 7 + 2;
-            if (minutes < 60) {
-                return `${minutes} min ago`;
-            } else {
-                return `${Math.floor(minutes / 60)} hour ago`;
-            }
-        });
+    // Update timestamps every minute
+    setInterval(updateTimestamps, 60000);
 
-        mockAnalyses.forEach((analysis, i) => {
-            analysis.timestamp = newTimestamps[i];
-        });
-
-        populateAnalyses();
-    }, 10000);
+    // Add new analysis every 30 seconds
+    setInterval(addNewAnalysis, 30000);
 });
