@@ -7,7 +7,7 @@ const archetypeShapes = {
         [-0.4, 0.3], [0.4, 0.3],  // Shoulders
         [-0.3, 0], [0.3, 0],  // Chest
         [-0.4, -0.3], [0.4, -0.3],  // Waist
-        [-0.5, -0.7], [-0.2, -0.9], [0.2, -0.9], [0.5, -07],  // Legs/base
+        [-0.5, -0.7], [-0.2, -0.9], [0.2, -0.9], [0.5, -0.7],  // Legs/base
         [0, 0.2], [0, -0.2]  // Center markers
     ],
     scout: [
@@ -57,27 +57,30 @@ const archetypeShapes = {
 };
 
 // Convert shape coords to 3D points (spread in Z for depth)
-function shapeToParticles(shapeCoords, particleCount = 150) {
+function shapeToParticles(shapeCoords, particleCount = 300) {
     const points = [];
     const scale = 3;  // Size of the shape
 
-    // Add the defined constellation points
+    // Add multiple particles per constellation point for denser shapes
     shapeCoords.forEach(([x, y]) => {
-        points.push({
-            x: x * scale,
-            y: y * scale,
-            z: (Math.random() - 0.5) * 0.5  // Slight depth variation
-        });
+        // Add 3-4 particles around each key point
+        for (let i = 0; i < 4; i++) {
+            points.push({
+                x: x * scale + (Math.random() - 0.5) * 0.15,
+                y: y * scale + (Math.random() - 0.5) * 0.15,
+                z: (Math.random() - 0.5) * 0.3  // Slight depth variation
+            });
+        }
     });
 
-    // Fill in extra particles randomly around the shape
+    // Fill in extra particles to reach desired count
     while (points.length < particleCount) {
         const randomPoint = shapeCoords[Math.floor(Math.random() * shapeCoords.length)];
         const [x, y] = randomPoint;
         points.push({
-            x: (x + (Math.random() - 0.5) * 0.3) * scale,
-            y: (y + (Math.random() - 0.5) * 0.3) * scale,
-            z: (Math.random() - 0.5) * 1
+            x: (x + (Math.random() - 0.5) * 0.4) * scale,
+            y: (y + (Math.random() - 0.5) * 0.4) * scale,
+            z: (Math.random() - 0.5) * 0.8
         });
     }
 
@@ -90,6 +93,7 @@ let currentShape = 'general';
 let targetPositions = [];
 let currentPositions = [];
 let transitionProgress = 0;
+let twinkleOffsets = [];  // For twinkling effect
 
 const shapeNames = Object.keys(archetypeShapes);
 let shapeIndex = 0;
@@ -105,26 +109,35 @@ function initConstellation() {
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.setClearColor(0x000000, 0);  // Transparent background
 
-    // Create particles
-    const particleCount = 150;
+    // Create particles (increased count)
+    const particleCount = 300;
     particleGeometry = new THREE.BufferGeometry();
 
     // Initialize random positions
     const positions = new Float32Array(particleCount * 3);
+    const sizes = new Float32Array(particleCount);  // Individual sizes for variety
+
     for (let i = 0; i < particleCount; i++) {
         positions[i * 3] = (Math.random() - 0.5) * 20;
         positions[i * 3 + 1] = (Math.random() - 0.5) * 20;
         positions[i * 3 + 2] = (Math.random() - 0.5) * 10;
+
+        // Random size variation
+        sizes[i] = Math.random() * 0.5 + 0.5;
+
+        // Random twinkle offset for each particle
+        twinkleOffsets.push(Math.random() * Math.PI * 2);
     }
 
     particleGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+    particleGeometry.setAttribute('size', new THREE.BufferAttribute(sizes, 1));
 
-    // Particle material (white, glowing dots)
+    // Particle material (smaller, glowing dots)
     particleMaterial = new THREE.PointsMaterial({
         color: 0xffffff,
-        size: 0.08,
+        size: 0.04,  // Reduced from 0.08
         transparent: true,
-        opacity: 0.8,
+        opacity: 0.9,
         sizeAttenuation: true,
         blending: THREE.AdditiveBlending
     });
@@ -146,11 +159,11 @@ function initConstellation() {
     // Start animation
     animate();
 
-    // Change shapes periodically
+    // Change shapes periodically (longer duration for better visibility)
     setInterval(() => {
         shapeIndex = (shapeIndex + 1) % shapeNames.length;
         morphToShape(shapeNames[shapeIndex]);
-    }, 5000);  // Change every 5 seconds
+    }, 7000);  // Changed from 5000 to 7000ms
 }
 
 function morphToShape(shapeName) {
@@ -164,10 +177,12 @@ function animate() {
     requestAnimationFrame(animate);
 
     const positions = particleGeometry.attributes.position.array;
+    const sizes = particleGeometry.attributes.size.array;
+    const time = Date.now() * 0.001;
 
-    // Smooth transition to target positions
+    // Smooth transition to target positions (slower for clearer shapes)
     if (transitionProgress < 1) {
-        transitionProgress += 0.01;  // Transition speed
+        transitionProgress += 0.005;  // Slower transition (was 0.01)
 
         for (let i = 0; i < targetPositions.length; i++) {
             const currentX = positions[i * 3];
@@ -188,12 +203,18 @@ function animate() {
         particleGeometry.attributes.position.needsUpdate = true;
     }
 
-    // Gentle rotation
-    particles.rotation.y += 0.001;
+    // Twinkling effect - vary opacity/size of individual particles
+    for (let i = 0; i < sizes.length; i++) {
+        const twinkle = Math.sin(time * 2 + twinkleOffsets[i]) * 0.3 + 0.7;
+        sizes[i] = twinkle;
+    }
+    particleGeometry.attributes.size.needsUpdate = true;
+
+    // Gentle rotation (slower)
+    particles.rotation.y += 0.0005;
 
     // Slight floating motion
-    const time = Date.now() * 0.0005;
-    camera.position.y = Math.sin(time) * 0.2;
+    camera.position.y = Math.sin(time * 0.5) * 0.15;
 
     renderer.render(scene, camera);
 }
