@@ -38,54 +38,42 @@ const archetypeClasses = {
     "Meta-Learner": "The Evolvers"
 };
 
-// Real agent names with diverse patterns
-const agentNames = [
-    "DataWeaver-3", "CodeSmith-Alpha", "QueryBot-7", "LogicEngine-X",
-    "PatternMiner-2", "SyntaxGuard-9", "CloudRunner-5", "MetaAgent-Prime",
-    "TaskOptimizer-4", "FlowController-Beta", "InsightFinder-1", "DebugMaster-6",
-    "SchemaBuilder-8", "APINavigator-Delta", "TestRunner-Gamma"
-];
+// Fetch real analyses from API (when available)
+async function fetchAnalyses() {
+    try {
+        // TODO: Replace with actual API endpoint when backend is ready
+        // const response = await fetch('/api/analyses/recent');
+        // const data = await response.json();
+        // return data.analyses;
 
-// Generate realistic analyses using real archetypes
-function generateRealisticAnalyses() {
-    const archetypes = Object.keys(archetypeClasses);
-    const analyses = [];
-    const now = Date.now();
-
-    for (let i = 0; i < 10; i++) {
-        const archetype = archetypes[Math.floor(Math.random() * archetypes.length)];
-        const agentName = agentNames[i % agentNames.length];
-        const minutesAgo = i * 7 + Math.floor(Math.random() * 5);
-
-        let timestamp;
-        if (minutesAgo < 60) {
-            timestamp = `${minutesAgo} min ago`;
-        } else {
-            const hours = Math.floor(minutesAgo / 60);
-            timestamp = `${hours} hour${hours > 1 ? 's' : ''} ago`;
-        }
-
-        analyses.push({
-            agent: agentName,
-            archetype: archetype,
-            class: archetypeClasses[archetype],
-            timestamp: timestamp,
-            minutesAgo: minutesAgo
-        });
+        // For now, return empty array since no real agents have used this yet
+        return [];
+    } catch (error) {
+        console.error('Failed to fetch analyses:', error);
+        return [];
     }
-
-    return analyses.sort((a, b) => a.minutesAgo - b.minutesAgo);
 }
 
-// Store current analyses
-let currentAnalyses = generateRealisticAnalyses();
-
 // Populate recent analyses
-function populateAnalyses() {
+async function populateAnalyses() {
     const list = document.getElementById('analysis-list');
+    const analyses = await fetchAnalyses();
+
+    if (analyses.length === 0) {
+        // Show empty state
+        list.innerHTML = `
+            <div style="text-align: center; padding: 3rem 1rem; color: var(--text-secondary);">
+                <div style="font-size: 2rem; margin-bottom: 1rem;">🔍</div>
+                <div style="font-size: 1.125rem; font-weight: 500; margin-bottom: 0.5rem;">No Recent Analyses</div>
+                <div style="font-size: 0.9375rem;">Be the first agent to use the Persona skill!</div>
+            </div>
+        `;
+        return;
+    }
+
     list.innerHTML = '';
 
-    currentAnalyses.forEach((analysis, index) => {
+    analyses.forEach((analysis, index) => {
         const item = document.createElement('div');
         item.className = 'analysis-item';
         item.style.animationDelay = `${index * 0.05}s`;
@@ -95,7 +83,7 @@ function populateAnalyses() {
                 <div class="agent-name">${analysis.agent}</div>
                 <div class="archetype-result">
                     <span class="archetype-tag">${analysis.archetype}</span>
-                    <span class="archetype-class">• ${analysis.class}</span>
+                    <span class="archetype-class">• ${archetypeClasses[analysis.archetype] || 'Unknown'}</span>
                 </div>
             </div>
             <div class="timestamp">${analysis.timestamp}</div>
@@ -108,8 +96,8 @@ function populateAnalyses() {
 // Animate statistics on load
 function animateStats() {
     const stats = [
-        { id: 'total-agents', target: 247, duration: 2000 },
-        { id: 'analyses-24h', target: 52, duration: 1500 },
+        { id: 'total-agents', target: 0, duration: 1000 },
+        { id: 'analyses-24h', target: 0, duration: 1000 },
         { id: 'archetypes', target: 36, duration: 1000 }
     ];
 
@@ -130,58 +118,11 @@ function animateStats() {
     });
 }
 
-// Update timestamps periodically
-function updateTimestamps() {
-    currentAnalyses = currentAnalyses.map(analysis => {
-        const newMinutesAgo = analysis.minutesAgo + 1;
-        let timestamp;
-
-        if (newMinutesAgo < 60) {
-            timestamp = `${newMinutesAgo} min ago`;
-        } else {
-            const hours = Math.floor(newMinutesAgo / 60);
-            timestamp = `${hours} hour${hours > 1 ? 's' : ''} ago`;
-        }
-
-        return {
-            ...analysis,
-            minutesAgo: newMinutesAgo,
-            timestamp: timestamp
-        };
-    });
-
-    populateAnalyses();
-}
-
-// Simulate new analysis every 30 seconds
-function addNewAnalysis() {
-    const archetypes = Object.keys(archetypeClasses);
-    const archetype = archetypes[Math.floor(Math.random() * archetypes.length)];
-    const agentName = agentNames[Math.floor(Math.random() * agentNames.length)];
-
-    const newAnalysis = {
-        agent: agentName,
-        archetype: archetype,
-        class: archetypeClasses[archetype],
-        timestamp: "just now",
-        minutesAgo: 0
-    };
-
-    // Add to front, remove oldest
-    currentAnalyses.unshift(newAnalysis);
-    currentAnalyses = currentAnalyses.slice(0, 10);
-
-    populateAnalyses();
-}
-
 // Initialize on page load
 document.addEventListener('DOMContentLoaded', () => {
     populateAnalyses();
     animateStats();
 
-    // Update timestamps every minute
-    setInterval(updateTimestamps, 60000);
-
-    // Add new analysis every 30 seconds
-    setInterval(addNewAnalysis, 30000);
+    // Refresh analyses every 30 seconds (when API is available)
+    setInterval(populateAnalyses, 30000);
 });
