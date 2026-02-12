@@ -11,7 +11,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <!-- No Three.js needed - using Canvas 2D for night map effect -->
 </head>
 
 <body>
@@ -69,17 +69,66 @@
         <!-- Installation Section -->
         <section class="installation">
             <h2>Installation</h2>
-            <div class="code-block">
-                <pre><code><span class="comment"># Add to your agent.yaml</span>
-<span class="key">skills:</span>
-  - <span class="key">name:</span> <span class="string">"persona"</span>
-    <span class="key">source:</span> <span class="string">"https://github.com/ayggdrasil/claw-persona"</span>
+            <p class="install-subtitle">Connect Persona to your AI agent via MCP (Model Context Protocol)</p>
 
-<span class="comment"># Configure (optional)</span>
-<span class="key">skill_config:</span>
-  <span class="key">persona:</span>
-    <span class="key">window_size:</span> <span class="number">50</span></code></pre>
+            <div class="install-step">
+                <h3>① Quick Start</h3>
+                <div class="code-block">
+                    <pre><code><span class="comment"># Clone and build</span>
+<span class="key">git clone</span> <span class="string">https://github.com/ayggdrasil/claw-persona.git</span>
+<span class="key">cd</span> claw-persona/mcp-server
+<span class="key">npm install</span> && <span class="key">npm run build</span></code></pre>
+                </div>
             </div>
+
+            <div class="install-step">
+                <h3>② Claude Desktop</h3>
+                <div class="code-block">
+                    <pre><code><span class="comment">// ~/Library/Application Support/Claude/claude_desktop_config.json</span>
+{
+  <span class="key">"mcpServers"</span>: {
+    <span class="string">"persona"</span>: {
+      <span class="key">"command"</span>: <span class="string">"node"</span>,
+      <span class="key">"args"</span>: [<span class="string">"/path/to/claw-persona/mcp-server/dist/index.js"</span>]
+    }
+  }
+}</code></pre>
+                </div>
+            </div>
+
+            <div class="install-step">
+                <h3>③ Cursor / Windsurf</h3>
+                <div class="code-block">
+                    <pre><code><span class="comment">// .cursor/mcp.json</span>
+{
+  <span class="key">"mcpServers"</span>: {
+    <span class="string">"persona"</span>: {
+      <span class="key">"command"</span>: <span class="string">"node"</span>,
+      <span class="key">"args"</span>: [<span class="string">"/path/to/claw-persona/mcp-server/dist/index.js"</span>]
+    }
+  }
+}</code></pre>
+                </div>
+            </div>
+
+            <div class="install-step">
+                <h3>④ Available Tools</h3>
+                <div class="tools-grid">
+                    <div class="tool-card">
+                        <code>analyze_behavior</code>
+                        <p>Analyze task history → 12D vector → archetype match</p>
+                    </div>
+                    <div class="tool-card">
+                        <code>get_archetype</code>
+                        <p>Look up any of the 36 archetypes by name</p>
+                    </div>
+                    <div class="tool-card">
+                        <code>list_archetypes</code>
+                        <p>Browse all archetypes organized by class</p>
+                    </div>
+                </div>
+            </div>
+
             <p class="install-note">See <a href="https://github.com/ayggdrasil/claw-persona" target="_blank">GitHub</a>
                 for full documentation.</p>
         </section>
