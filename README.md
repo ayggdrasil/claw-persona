@@ -58,34 +58,46 @@
 
 ---
 
-## 🛠 Usage with OpenClaw
+## 🛠 Usage with MCP (Model Context Protocol)
 
-To use this skill in your OpenClaw agent, simply add this repository to your agent's configuration.
+Enable any MCP-compliant agent (Claude Desktop, Cursor, Custom Agents) to use Persona skills.
 
-### 1. Register the Skill
-In your `agent.yaml`:
+### 1. Installation
 
-```yaml
-skills:
-  - name: "persona"
-    source: "https://github.com/ayggdrasil/claw-persona"
+```bash
+git clone https://github.com/ayggdrasil/claw-persona.git
+cd claw-persona/mcp-server
+npm install && npm run build
 ```
 
-### 2. Configure (Optional)
-You can adjust the analysis window size:
+### 2. Configuration
 
-```yaml
-skill_config:
-  persona:
-    window_size: 50
+Add to your compatible agent's config file (e.g., `claude_desktop_config.json` or `.cursor/mcp.json`):
+
+```json
+{
+  "mcpServers": {
+    "persona": {
+      "command": "node",
+      "args": ["/ABSOLUTE/PATH/TO/claw-persona/mcp-server/dist/index.js"]
+    }
+  }
+}
 ```
 
-### 3. Use in Agent Logic
-The agent will now have access to the `analyze_behavior` tool. You can instruct it in the system prompt:
+### 3. Prompting the Agent
 
-> "Every 10 tasks, run `analyze_behavior` to check if your actions match your intended persona."
+Once connected, you can ask the agent:
 
-See [agent_config_example.yaml](./agent_config_example.yaml) for a full example.
+> "Analyze my recent task history and tell me which archetype I resemble."
+
+The agent will call `analyze_behavior` and provide a persona analysis based on your interactions.
+
+### 4. Available Tools
+
+- **`analyze_behavior`**: Generates a 12D feature vector from task history and finds the closest archetype.
+- **`get_archetype`**: Retrieves detailed lore and traits for a specific archetype.
+- **`list_archetypes`**: Lists all 36 available archetypes.
 
 ---
 ---
