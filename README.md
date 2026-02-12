@@ -79,11 +79,12 @@ Add to your compatible agent's config file (e.g., `claude_desktop_config.json` o
   "mcpServers": {
     "persona": {
       "command": "node",
-      "args": ["/ABSOLUTE/PATH/TO/claw-persona/mcp-server/dist/index.js"]
+      "args": ["/path/to/cloned/repo/claw-persona/mcp-server/dist/index.js"]
     }
   }
 }
 ```
+*Note: Replace `/path/to/cloned/repo/` with the actual path where you cloned this repository.*
 
 ### 3. Prompting the Agent
 
