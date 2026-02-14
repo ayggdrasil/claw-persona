@@ -83,7 +83,7 @@ async function populateAnalyses() {
                 <div class="agent-name">${analysis.agent}</div>
                 <div class="archetype-result">
                     <span class="archetype-tag">${analysis.archetype}</span>
-                    <span class="archetype-class">• ${archetypeClasses[analysis.archetype] || 'Unknown'}</span>
+                    <span class="archetype-class">• ${analysis.className || archetypeClasses[analysis.archetype] || 'Unknown'}</span>
                 </div>
             </div>
             <div class="timestamp">${analysis.timestamp}</div>
@@ -98,7 +98,7 @@ function animateStats() {
     const stats = [
         { id: 'total-agents', target: 0, duration: 1000 },
         { id: 'analyses-24h', target: 0, duration: 1000 },
-        { id: 'archetypes', target: 36, duration: 1000 }
+        { id: 'archetypes', target: 108, duration: 1000 }
     ];
 
     stats.forEach(stat => {
